@@ -1,0 +1,102 @@
+# Configuration settings for the project
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+API_VERSION = "v1"
+TIMEOUT = 180  # seconds
+
+# LangChain Configuration
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+AIPIPE_API_KEY = os.getenv("AIPIPE_API_KEY")  # Added for AIpipe
+AIPIPE_BASE_URL = os.getenv("AIPIPE_BASE_URL", "https://aipipe.org/openai/v1")  # Default AIpipe endpoint
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")  # Added for Gemini
+LANGCHAIN_TRACING_V2 = os.getenv("LANGCHAIN_TRACING_V2", "false")
+LANGCHAIN_API_KEY = os.getenv("LANGCHAIN_API_KEY")
+
+# Model Configuration (use valid model IDs; allow override via env)
+DEFAULT_OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+DEFAULT_GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+TEMPERATURE = 0.3  # Lower temperature for more accurate analysis
+MAX_TOKENS = 4000
+
+# Vector Store Configuration
+VECTOR_STORE_TYPE = "chromadb"  # Options: chromadb, faiss
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
+
+# Chain Configuration
+CHAIN_TIMEOUT = 120  # seconds
+MAX_RETRIES = 3
+
+
+def get_chat_model(provider="aipipe"):
+    """
+    Get a chat model instance with configuration based on the provider.
+    :param provider: 'openai', 'aipipe', or 'gemini'
+    """
+    if provider == "aipipe":
+        if not AIPIPE_API_KEY:
+            raise ValueError("AIPIPE_API_KEY not set; LLM is not configured")
+        try:
+            from langchain_openai import ChatOpenAI
+            return ChatOpenAI(
+                api_key=AIPIPE_API_KEY,
+                base_url=AIPIPE_BASE_URL,
+                model=DEFAULT_OPENAI_MODEL,  # AIpipe often supports OpenAI model names
+                temperature=TEMPERATURE,
+                max_tokens=MAX_TOKENS
+            )
+        except ImportError:
+            # Fallback for older LangChain versions
+            try:
+                from langchain.chat_models import ChatOpenAI
+                return ChatOpenAI(
+                    openai_api_key=AIPIPE_API_KEY,
+                    openai_api_base=AIPIPE_BASE_URL,
+                    model_name=DEFAULT_OPENAI_MODEL,
+                    temperature=TEMPERATURE,
+                    max_tokens=MAX_TOKENS
+                )
+            except ImportError:
+                raise ImportError("Could not import ChatOpenAI from langchain or langchain_openai")
+    elif provider == "openai":
+        if not OPENAI_API_KEY:
+            raise ValueError("OPENAI_API_KEY not set; LLM is not configured")
+        try:
+            from langchain.chat_models import ChatOpenAI
+            return ChatOpenAI(
+                openai_api_key=OPENAI_API_KEY,
+                model_name=DEFAULT_OPENAI_MODEL,
+                temperature=TEMPERATURE,
+                max_tokens=MAX_TOKENS
+            )
+        except ImportError:
+            # Fallback for newer LangChain versions
+            try:
+                from langchain_openai import ChatOpenAI
+                return ChatOpenAI(
+                    api_key=OPENAI_API_KEY,
+                    model=DEFAULT_OPENAI_MODEL,
+                    temperature=TEMPERATURE,
+                    max_tokens=MAX_TOKENS
+                )
+            except ImportError:
+                raise ImportError("Could not import ChatOpenAI from langchain or langchain_openai")
+    elif provider == "gemini":
+        if not GEMINI_API_KEY:
+            raise ValueError("GEMINI_API_KEY not set; LLM is not configured")
+        try:
+            from langchain_google_genai import ChatGoogleGenerativeAI
+            return ChatGoogleGenerativeAI(
+                model=DEFAULT_GEMINI_MODEL,
+                google_api_key=GEMINI_API_KEY,
+                temperature=TEMPERATURE,
+                max_output_tokens=MAX_TOKENS,
+                convert_system_message_to_human=True  # Important for some chains
+            )
+        except ImportError:
+            raise ImportError("Could not import ChatGoogleGenerativeAI. Please install langchain-google-genai.")
+    else:
+        raise ValueError(f"Unsupported provider: {provider}. Choose 'openai' or 'gemini'.")

@@ -1,0 +1,6 @@
+Analyze this dataset and answer questions:
+- What patterns do you see in the data?
+- What insights can you provide?
+- What recommendations do you have?
+
+Please provide a comprehensive analysis.

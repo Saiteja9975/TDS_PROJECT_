@@ -1,0 +1,11 @@
+# Example questions for testing the data analysis API
+# Save this as questions.txt and upload with your API request
+
+Analyze the GDP data from https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)
+
+Questions to answer:
+1. Which country has the highest GDP?
+2. What are the top 10 countries by GDP?
+3. What is the total GDP of the top 5 countries?
+4. Create a visualization showing GDP comparison of top 10 countries
+5. Which countries have GDP over $5 trillion?

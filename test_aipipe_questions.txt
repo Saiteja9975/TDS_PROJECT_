@@ -1,0 +1,6 @@
+Scrape data from https://en.wikipedia.org/wiki/2024_Summer_Olympics_medal_table and answer these questions:
+- Which country won the most gold medals?
+- What are the top 5 countries by total medals?
+- What patterns can you see in the medal distribution?
+
+Please provide a comprehensive analysis with visualizations.

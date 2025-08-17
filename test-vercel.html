@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TDS Project2 Data Analysis API - Test Interface</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="file"], textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        textarea {
+            height: 120px;
+            resize: vertical;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .secondary-btn {
+            background: #6c757d;
+        }
+        .secondary-btn:hover {
+            background: #545b62;
+        }
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+        .error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .example-section {
+            background: #e7f3ff;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .endpoint-info {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ffc107;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        .json-output {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 TDS Project2 Data Analysis API</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 30px;">
+            Multi-modal data analysis with web scraping, file processing, and AI-powered insights
+        </p>
+
+        <div class="endpoint-info">
+            <strong>📍 API Endpoint:</strong> <span id="api-endpoint">https://your-project-name.vercel.app</span>
+            <br>
+            <small>Update this URL after deploying to Vercel</small>
+        </div>
+
+        <div class="example-section">
+            <h3>💡 Quick Examples</h3>
+            <p><strong>Web Scraping:</strong> "Analyze GDP data from https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)"</p>
+            <p><strong>Data Analysis:</strong> Upload a CSV file with questions about trends and patterns</p>
+            <p><strong>Multi-step:</strong> "Extract, clean, analyze and visualize the data with top 10 results"</p>
+        </div>
+
+        <form id="analysisForm">
+            <div class="form-group">
+                <label for="endpoint">API Endpoint URL:</label>
+                <input type="text" id="endpoint" value="https://your-project-name.vercel.app" 
+                       placeholder="Enter your Vercel deployment URL">
+                <small style="color: #666;">Update this with your actual Vercel deployment URL</small>
+            </div>
+
+            <div class="form-group">
+                <label for="questions">Questions/Task Description:</label>
+                <textarea id="questions" placeholder="Enter your analysis questions or task description here...
+Example:
+Analyze the GDP data from https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)
+
+Questions to answer:
+1. Which country has the highest GDP?
+2. What are the top 10 countries by GDP?
+3. Create a visualization showing GDP comparison"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="questionsFile">Questions File (questions.txt):</label>
+                <input type="file" id="questionsFile" accept=".txt" required>
+                <small style="color: #666;">Required: Upload a .txt file containing your questions</small>
+            </div>
+
+            <div class="form-group">
+                <label for="additionalFiles">Additional Files (Optional):</label>
+                <input type="file" id="additionalFiles" multiple accept=".csv,.json,.txt,.png,.jpg,.jpeg">
+                <small style="color: #666;">Optional: CSV data, images, or other relevant files</small>
+            </div>
+
+            <div class="form-group">
+                <label for="reasoning">Enable Iterative Reasoning:</label>
+                <select id="reasoning">
+                    <option value="false">Standard Processing</option>
+                    <option value="true">Enhanced Analysis (Slower)</option>
+                </select>
+            </div>
+
+            <button type="submit">🔍 Analyze Data</button>
+            <button type="button" class="secondary-btn" onclick="testHealth()">🏥 Test Health</button>
+            <button type="button" class="secondary-btn" onclick="getCapabilities()">⚙️ Get Capabilities</button>
+            <button type="button" class="secondary-btn" onclick="loadExample()">📝 Load Example</button>
+        </form>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Processing your request... This may take up to 2-3 minutes.</p>
+        </div>
+
+        <div id="results"></div>
+    </div>
+
+    <script>
+        // Update endpoint display
+        document.getElementById('endpoint').addEventListener('input', function() {
+            document.getElementById('api-endpoint').textContent = this.value;
+        });
+
+        // Load example questions
+        function loadExample() {
+            document.getElementById('questions').value = `Analyze the GDP data from https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)
+
+Questions to answer:
+1. Which country has the highest GDP?
+2. What are the top 10 countries by GDP?
+3. What is the total GDP of the top 5 countries?
+4. Create a visualization showing GDP comparison of top 10 countries
+5. Which countries have GDP over $5 trillion?`;
+
+            // Create example questions file
+            const content = document.getElementById('questions').value;
+            const file = new File([content], 'questions.txt', { type: 'text/plain' });
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            document.getElementById('questionsFile').files = dt.files;
+        }
+
+        // Test health endpoint
+        async function testHealth() {
+            const endpoint = document.getElementById('endpoint').value;
+            const resultsDiv = document.getElementById('results');
+            
+            try {
+                const response = await fetch(`${endpoint}/health`);
+                const data = await response.json();
+                
+                resultsDiv.innerHTML = `
+                    <div class="results">
+                        <h3>✅ Health Check Results</h3>
+                        <div class="json-output">${JSON.stringify(data, null, 2)}</div>
+                    </div>
+                `;
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="results error">
+                        <h3>❌ Health Check Failed</h3>
+                        <p>Error: ${error.message}</p>
+                        <p>Make sure your endpoint URL is correct and the service is deployed.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Get workflow capabilities
+        async function getCapabilities() {
+            const endpoint = document.getElementById('endpoint').value;
+            const resultsDiv = document.getElementById('results');
+            
+            try {
+                const response = await fetch(`${endpoint}/api/workflow-capabilities`);
+                const data = await response.json();
+                
+                resultsDiv.innerHTML = `
+                    <div class="results">
+                        <h3>⚙️ Workflow Capabilities</h3>
+                        <div class="json-output">${JSON.stringify(data, null, 2)}</div>
+                    </div>
+                `;
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="results error">
+                        <h3>❌ Failed to Get Capabilities</h3>
+                        <p>Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Main form submission
+        document.getElementById('analysisForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const endpoint = document.getElementById('endpoint').value;
+            const questionsFile = document.getElementById('questionsFile').files[0];
+            const additionalFiles = document.getElementById('additionalFiles').files;
+            const reasoning = document.getElementById('reasoning').value === 'true';
+            
+            if (!questionsFile) {
+                alert('Please upload a questions.txt file');
+                return;
+            }
+
+            if (!endpoint || endpoint === 'https://your-project-name.vercel.app') {
+                alert('Please update the endpoint URL with your actual Vercel deployment URL');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('questions_txt', questionsFile);
+            formData.append('enable_iterative_reasoning', reasoning);
+            formData.append('enable_logging', 'true');
+            
+            // Add additional files
+            for (let i = 0; i < additionalFiles.length; i++) {
+                formData.append('files', additionalFiles[i]);
+            }
+            
+            const loadingDiv = document.getElementById('loading');
+            const resultsDiv = document.getElementById('results');
+            
+            loadingDiv.style.display = 'block';
+            resultsDiv.innerHTML = '';
+            
+            try {
+                const response = await fetch(`${endpoint}/api/`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                loadingDiv.style.display = 'none';
+                
+                if (response.ok) {
+                    resultsDiv.innerHTML = `
+                        <div class="results">
+                            <h3>✅ Analysis Complete</h3>
+                            <p><strong>Task ID:</strong> ${data.task_id}</p>
+                            <p><strong>Workflow:</strong> ${data.workflow_type}</p>
+                            <p><strong>Status:</strong> ${data.status}</p>
+                            
+                            <h4>📊 Results</h4>
+                            <div class="json-output">${JSON.stringify(data.result, null, 2)}</div>
+                            
+                            <h4>ℹ️ Processing Info</h4>
+                            <div class="json-output">${JSON.stringify(data.processing_info, null, 2)}</div>
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `
+                        <div class="results error">
+                            <h3>❌ Analysis Failed</h3>
+                            <p><strong>Status:</strong> ${response.status}</p>
+                            <p><strong>Error:</strong> ${data.detail || 'Unknown error'}</p>
+                            <div class="json-output">${JSON.stringify(data, null, 2)}</div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                loadingDiv.style.display = 'none';
+                resultsDiv.innerHTML = `
+                    <div class="results error">
+                        <h3>❌ Request Failed</h3>
+                        <p>Error: ${error.message}</p>
+                        <p>Please check your endpoint URL and try again.</p>
+                    </div>
+                `;
+            }
+        });
+
+        // Auto-create questions file from textarea
+        document.getElementById('questions').addEventListener('input', function() {
+            const content = this.value;
+            if (content.trim()) {
+                const file = new File([content], 'questions.txt', { type: 'text/plain' });
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                document.getElementById('questionsFile').files = dt.files;
+            }
+        });
+    </script>
+</body>
+</html>
